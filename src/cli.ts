@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { existsSync, statSync } from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
 
@@ -127,7 +128,15 @@ function parseArgv():Option{
 
 };
 
-async function compressImage(options: Option):Promise<void> {
+async function compressImage(options: Option): Promise<void> {
+    if (existsSync(options.output) && !options.overwrite) {
+        throw new Error(
+        `Output file already exists: ${options.output}. Please use --overwrite to replace.`,
+        );
+    }
+    
+    const sizeBeforeCompression = statSync(options.input).size;
+
     await sharp(options.input)
         .jpeg({
         quality: options.quality,
@@ -135,14 +144,20 @@ async function compressImage(options: Option):Promise<void> {
         mozjpeg: true,
         })
         .toFile(options.output);
-}
 
+    const sizeAfterCompression = statSync(options.output).size;
+    const savedPct = (((sizeBeforeCompression - sizeAfterCompression) / sizeBeforeCompression) * 100).toFixed(2); // in %
+    
+    promptUser("log", `Compressed: ${options.input} -> ${options.output}`);
+    promptUser("log", `Before: ${sizeBeforeCompression} bytes`);
+    promptUser("log", `After:  ${sizeAfterCompression} bytes`);
+    promptUser("log", `Saved:  ${savedPct}%`);
+}
 
 
 async function main():Promise<void> {
     const options = parseArgv();
     await compressImage(options);
-    promptUser("log", `Compressed: ${options.input} -> ${options.output}`);
 }
 
 await main();
