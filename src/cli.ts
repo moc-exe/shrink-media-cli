@@ -20,5 +20,7 @@ function parseArgv():Option{
 
 async function main():Promise<void>{
 
-    
+    parseArgv();    
 };
+
+await main();
