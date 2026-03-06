@@ -1,0 +1,28 @@
+{
+  "name": "shrink-media",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/moc-exe/shrink-media-cli.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/moc-exe/shrink-media-cli/issues"
+  },
+  "homepage": "https://github.com/moc-exe/shrink-media-cli#readme",
+  "devDependencies": {
+    "@types/node": "^25.3.5",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "sharp": "^0.34.5"
+  }
+}
