@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import path from "node:path";
+import sharp from "sharp";
 
 type Option = {
 
@@ -126,11 +127,22 @@ function parseArgv():Option{
 
 };
 
+async function compressImage(options: Option):Promise<void> {
+    await sharp(options.input)
+        .jpeg({
+        quality: options.quality,
+        progressive: true,
+        mozjpeg: true,
+        })
+        .toFile(options.output);
+}
 
 
-async function main():Promise<void>{
 
-    parseArgv();    
-};
+async function main():Promise<void> {
+    const options = parseArgv();
+    await compressImage(options);
+    promptUser("log", `Compressed: ${options.input} -> ${options.output}`);
+}
 
 await main();
