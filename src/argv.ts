@@ -1,26 +1,14 @@
-#!/usr/bin/env node
-import { existsSync, statSync } from "node:fs";
+
 import path from "node:path";
-import sharp from "sharp";
-
-type Option = {
-
-    input: string, 
-    output: string,
-    quality: number, // [0-100] %
-    overwrite:boolean
-
-};
-
-const ALLOWED_INPUT_EXTENSIONS= ["jpg","jpeg","png","webp"];
+import type { MessageMode, Option } from "./types.js";
+const ALLOWED_INPUT_EXTENSIONS:string[]= ["jpg","jpeg","png","webp"];
 const USAGE_MSG:string = "Usage: shrinkup <input> [output] [--quality <0-100>] [--overwrite] [--help]";
-type MessageMode = "log" | "error" | "warn";
 
 function printUsage():void{
     promptUser("log", USAGE_MSG);
 };
 
-function promptUser(mode:MessageMode, msg:string):void{
+export function promptUser(mode:MessageMode, msg:string):void{
     
     switch(mode){
 
@@ -37,15 +25,7 @@ function promptUser(mode:MessageMode, msg:string):void{
     }
 };
 
-function makeDefaultOutput(input: string): string {
-  const ext = path.extname(input);         
-  const base = path.basename(input, ext);   
-
-  return `${base}.compressed.jpg`;
-}
-
-
-function parseArgv():Option{
+export function parseArgv():Option{
 
     /**
      * The way I see it for now
@@ -128,36 +108,11 @@ function parseArgv():Option{
 
 };
 
-async function compressImage(options: Option): Promise<void> {
-    if (existsSync(options.output) && !options.overwrite) {
-        throw new Error(
-        `Output file already exists: ${options.output}. Please use --overwrite to replace.`,
-        );
-    }
-    
-    const sizeBeforeCompression = statSync(options.input).size;
+function makeDefaultOutput(input: string): string {
+  const ext = path.extname(input);         
+  const base = path.basename(input, ext);   
 
-    await sharp(options.input)
-        .jpeg({
-        quality: options.quality,
-        progressive: true,
-        mozjpeg: true,
-        })
-        .toFile(options.output);
-
-    const sizeAfterCompression = statSync(options.output).size;
-    const savedPct = (((sizeBeforeCompression - sizeAfterCompression) / sizeBeforeCompression) * 100).toFixed(2); // in %
-    
-    promptUser("log", `Compressed: ${options.input} -> ${options.output}`);
-    promptUser("log", `Before: ${sizeBeforeCompression} bytes`);
-    promptUser("log", `After:  ${sizeAfterCompression} bytes`);
-    promptUser("log", `Saved:  ${savedPct}%`);
+  return `${base}.compressed.jpg`;
 }
 
 
-async function main():Promise<void> {
-    const options = parseArgv();
-    await compressImage(options);
-}
-
-await main();
