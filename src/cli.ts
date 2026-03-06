@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import path from "node:path";
 
 type Option = {
 
@@ -33,6 +34,13 @@ function promptUser(mode:MessageMode, msg:string):void{
         default: console.log(msg);
     }
 };
+
+function makeDefaultOutput(input: string): string {
+  const ext = path.extname(input);         
+  const base = path.basename(input, ext);   
+
+  return `${base}.compressed.jpg`;
+}
 
 
 function parseArgv():Option{
@@ -105,7 +113,7 @@ function parseArgv():Option{
     }
 
     if (parsedOutput === undefined) {
-        parsedOutput = `compressed.${parsedInput}`;
+        parsedOutput = makeDefaultOutput(input);
     }   
     
     return {
