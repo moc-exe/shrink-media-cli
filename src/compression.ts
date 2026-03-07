@@ -12,13 +12,18 @@ export async function compressImage(options: Option): Promise<void> {
     
     const sizeBeforeCompression = statSync(options.input).size;
 
-    await sharp(options.input)
-        .jpeg({
-        quality: options.quality,
-        progressive: true,
-        mozjpeg: true,
-        })
-        .toFile(options.output);
+    switch (options.outputFormat) {
+        case "jpg":
+        case "jpeg":
+            await sharp(options.input).jpeg({ quality:options.quality }).toFile(options.output);
+            break;
+        case "png":
+            await sharp(options.input).png({ quality:options.quality }).toFile(options.output);
+            break;
+        case "webp":
+            await sharp(options.input).webp({ quality:options.quality }).toFile(options.output);
+            break;
+    }
 
     const sizeAfterCompression = statSync(options.output).size;
     const savedPct = (((sizeBeforeCompression - sizeAfterCompression) / sizeBeforeCompression) * 100).toFixed(2); // in %
@@ -27,4 +32,4 @@ export async function compressImage(options: Option): Promise<void> {
     promptUser("log", `Before: ${sizeBeforeCompression} bytes`);
     promptUser("log", `After:  ${sizeAfterCompression} bytes`);
     promptUser("log", `Saved:  ${savedPct}%`);
-}
+};
