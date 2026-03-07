@@ -62,6 +62,7 @@ export function parseArgv():Option{
                 printUsage();
                 process.exit(1);
             }
+            idx++;
             continue;
         }
         else if(currentArg === "--overwrite"){
