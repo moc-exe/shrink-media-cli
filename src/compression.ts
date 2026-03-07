@@ -11,7 +11,7 @@ export async function compressImage(options: Option): Promise<void> {
     }
     
     const sizeBeforeCompression = statSync(options.input).size;
-    console.log(`requested quality=${options.quality}`);
+
     await sharp(options.input)
         .jpeg({
         quality: options.quality,
