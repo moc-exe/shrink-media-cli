@@ -13,14 +13,14 @@ export async function compressImage(options: Option): Promise<void> {
     const sizeBeforeCompression = statSync(options.input).size;
 
     switch (options.outputFormat) {
-        case "jpg":
-        case "jpeg":
+        case ".jpg":
+        case ".jpeg":
             await sharp(options.input).jpeg({ quality:options.quality }).toFile(options.output);
             break;
-        case "png":
+        case ".png":
             await sharp(options.input).png({ quality:options.quality }).toFile(options.output);
             break;
-        case "webp":
+        case ".webp":
             await sharp(options.input).webp({ quality:options.quality }).toFile(options.output);
             break;
     }
